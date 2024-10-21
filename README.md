@@ -13,7 +13,7 @@ RWA Lending: 0x1bb930f4341e61DE7FcF1Cd6C9832Da2a8be71A4
 English Auction: 0xB1Dc1872F537f53905F000bc9A582D6Af26388E2
 
 This project leverages **Chainlink** and **Zillow's API** to create a fractionalized real estate token, representing off-chain properties on the blockchain. We use **ERC-1155** for fractional ownership, with cross-chain functionality enabled by **Chainlink CCIP**.
-该项目利用 Chainlink 和 Zillow 的 API 创建一个细分权益化的房地产代币，代表区块链上的链下财产。我们使用 ERC-1155 进行所有权的细分，并通过 Chainlink CCIP 启用跨链功能。
+- 该项目利用 Chainlink 和 Zillow 的 API 创建一个细分权益化的房地产代币，代表区块链上的链下财产。我们使用 ERC-1155 进行所有权的细分，并通过 Chainlink CCIP 启用跨链功能。
 
 ## Overview
 
