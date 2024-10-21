@@ -1,0 +1,73 @@
+{
+	"compiler": {
+		"version": "0.8.24+commit.e11b9ed9"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "getNftMetadata",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getPrices",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY. THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE. DO NOT USE THIS CODE IN PRODUCTION.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"FunctionsSource.sol": "FunctionsSource"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"FunctionsSource.sol": {
+			"keccak256": "0x303282371e6ca5d4285c17e5897a5abfe22278d8a604efec20a390978420125a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6399e2b289b6ea09d1fc0bc97ed8097ee9b883010f4b1c72464116401a85be55",
+				"dweb:/ipfs/QmaoatG4cn2e7pXJJvoYmN5SiY31K227XoKNp3xWqigkXy"
+			]
+		}
+	},
+	"version": 1
+}

@@ -1,0 +1,887 @@
+{
+	"compiler": {
+		"version": "0.8.24+commit.e11b9ed9"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "realEstateTokenAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "usdc",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "usdcUsdAggregatorAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint32",
+						"name": "usdcUsdFeedHeartbeat",
+						"type": "uint32"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "borrower",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "AlreadyBorrowed",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "InvalidRoundId",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "InvalidValuation",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "NothingToRepay",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "OnlyRealEstateTokenSupported",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "PriceFeedDdosed",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ReentrancyGuardReentrantCall",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "SafeERC20FailedOperation",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "SlippageToleranceExceeded",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "StalePriceFeed",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "loanAmount",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "liquidationThreshold",
+						"type": "uint256"
+					}
+				],
+				"name": "Borrow",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "BorrowRepayed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "Liquidated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferRequested",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "acceptOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "minLoanAmount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxLiquidationThreshold",
+						"type": "uint256"
+					}
+				],
+				"name": "borrow",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getUsdcPriceInUsd",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "getValuationInUsdc",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "borrower",
+						"type": "address"
+					}
+				],
+				"name": "liquidate",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "bytes",
+						"name": "",
+						"type": "bytes"
+					}
+				],
+				"name": "onERC1155BatchReceived",
+				"outputs": [
+					{
+						"internalType": "bytes4",
+						"name": "",
+						"type": "bytes4"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "",
+						"type": "bytes"
+					}
+				],
+				"name": "onERC1155Received",
+				"outputs": [
+					{
+						"internalType": "bytes4",
+						"name": "",
+						"type": "bytes4"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "repay",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "usdcUsdAggregatorAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint32",
+						"name": "usdcUsdFeedHeartbeat",
+						"type": "uint32"
+					}
+				],
+				"name": "setUsdcUsdPriceFeedDetails",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes4",
+						"name": "interfaceId",
+						"type": "bytes4"
+					}
+				],
+				"name": "supportsInterface",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"errors": {
+				"ReentrancyGuardReentrantCall()": [
+					{
+						"details": "Unauthorized reentrant call."
+					}
+				],
+				"SafeERC20FailedOperation(address)": [
+					{
+						"details": "An operation with an ERC-20 token failed."
+					}
+				]
+			},
+			"kind": "dev",
+			"methods": {
+				"supportsInterface(bytes4)": {
+					"details": "Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section] to learn more about how these ids are created. This function call must use less than 30 000 gas."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"acceptOwnership()": {
+					"notice": "Allows an ownership transfer to be completed by the recipient."
+				},
+				"owner()": {
+					"notice": "Get the current owner"
+				},
+				"transferOwnership(address)": {
+					"notice": "Allows an owner to begin transferring ownership to a new address."
+				}
+			},
+			"notice": "THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY. THIS IS AN EXAMPLE CONTRACT THAT USES UN-AUDITED CODE. DO NOT USE THIS CODE IN PRODUCTION.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"use-cases/RWALending.sol": "RwaLending"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IAny2EVMMessageReceiver.sol": {
+			"keccak256": "0xd2a05a4f58a453cbf8cfa6aa78f58cb8e42091b3a025f711a0aa51f584e16b48",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e3bb4ca50612b0150a29b9ea7c82f6228914ff54716584541bad5c0259e8fa33",
+				"dweb:/ipfs/QmTnqhNtBD9bUmqVaR4YHkWrBUdSGHV3DXAgrTM193PGkH"
+			]
+		},
+		"@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol": {
+			"keccak256": "0x176bc6a1bec19d76464566d4becb68946e4c53b779e2019b34f95be4fee571f6",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8f8abd3813d7acb8f5b510dbdc9f7eb9b0fe300ea4261ae9c4f843e0d3f0b24a",
+				"dweb:/ipfs/QmSCmCC5wXYqgvLfpdqWxZTfo837DYVPLo9CYEKhgid1DA"
+			]
+		},
+		"@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol": {
+			"keccak256": "0xa1ce70adec733c80b230084b425a50caa852a99f17a7e43e38a96a975f11ce88",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://08db3aa57ceae13832c1bf323aa29afa2620fd5b5205ff0d56152bf323c56256",
+				"dweb:/ipfs/QmUG2FSVP8xXVkdgFwNhc4YFDU7FNCaf1kKShiTaaHUddE"
+			]
+		},
+		"@chainlink/contracts-ccip/src/v0.8/shared/access/ConfirmedOwner.sol": {
+			"keccak256": "0xdcb0e9135ddbe71ee27ba99fa06656960c66c964cf2ecb29696da1c1427d9861",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f914a1b638300e82d8f5a020a4195235599afebab4ef1e10c6992f3c90e7df3e",
+				"dweb:/ipfs/Qmf2MbuVB16qbCGii3U5cjcBvVjAHHYzKp9voJa2eDch9B"
+			]
+		},
+		"@chainlink/contracts-ccip/src/v0.8/shared/access/ConfirmedOwnerWithProposal.sol": {
+			"keccak256": "0x2422a055657a87e98be61f8f31abb1824ec50fd0f73949f4e3c6ac877efb6da8",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://fde3b9ac3a4c42ea43e2f92b037d32ab20e30818471c6e20d2590147a6c2958a",
+				"dweb:/ipfs/QmQ2ohQP4GnhPUsiWCvCfb1dsoGYDdxSap3dxtnYTV4rmT"
+			]
+		},
+		"@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol": {
+			"keccak256": "0x895af02d6a3df2930bbb6ec1f2d68118b492ca6e710ba0c34fcb6b574a0906aa",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c4c69fab5eea1c0448f856a51d7e5736454fe5cc083d36c60bf3ee23bb3d0e8e",
+				"dweb:/ipfs/QmP4fYQ9k7xeZms6cwnqnQuuAkRkeE2TWewyvCD8Mrc2DZ"
+			]
+		},
+		"@chainlink/contracts-ccip/src/v0.8/shared/interfaces/IOwnable.sol": {
+			"keccak256": "0x885de72b7b4e4f1bf8ba817a3f2bcc37fd9022d342c4ce76782151c30122d767",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://17c636625a5d29a140612db496d2cca9fb4b48c673adb0fd7b3957d287e75921",
+				"dweb:/ipfs/QmNoBX8TY424bdQWyQC7y3kpKfgxyWxhLw7KEhhEEoBN9q"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/functions/v1_0_0/FunctionsClient.sol": {
+			"keccak256": "0x40224641403cb9fa03d4f060296d7420a9ff11b46abadc958ae048459205e397",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7d1dabc1ca292b93c373589b1827f01b404d0d66669f58c03b6d2f92a6e64f2c",
+				"dweb:/ipfs/QmP3yzaUfqUqb7qk4fBYw8U6rMgWsSgNKjSUGJncjwaHCq"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/functions/v1_0_0/interfaces/IFunctionsClient.sol": {
+			"keccak256": "0x6117b82e7c4eec44ce557b0fc8bc1ac5f49e5d160ac6d4485452d6aafdd762ff",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0e0828ef423afef9f6f709bb173a7e3991fe555bf9337a4941d65da525ac4ad3",
+				"dweb:/ipfs/QmXz1jHRZFTqdnNxP2tffVQ9NnUE1xgtBMRWuyUrTVY4pm"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/functions/v1_0_0/interfaces/IFunctionsRouter.sol": {
+			"keccak256": "0x44db41e8ff90c2828ca0ada125abc4b411921a86514a4a047fd9fd43ba9d7e08",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c4c3228edc2cff7c55301d3764e54cd7ada6af81ef9aadf8bc116a2c982523d6",
+				"dweb:/ipfs/QmXjJQgCu2gvX6QQJ9GC1gEoy3vrmpf1PiRPLqWqKddwRe"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol": {
+			"keccak256": "0xed75be0eaba358d468f1fe18adc377d5044f57eff0070081f884a1f212d0adc2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ea7c96e993b253723ed5461008c34b847d7b067221736068d45f029db4d92b0d",
+				"dweb:/ipfs/QmTMMXAWXeDgSChnToydej6e3p331KiJZT3S27ZiPkht9t"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/functions/v1_0_0/libraries/FunctionsResponse.sol": {
+			"keccak256": "0xc72eb037effef32146f7cd4086af00f44f28c8649d891e5e404fec5fda7e802b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://eeeaeadc797b7656fd30201ab8c8ed24fe8fb3f83a480142bb55c7c7babb2b4b",
+				"dweb:/ipfs/Qmdb55a1iWJetog7qUpZ6FHKGSA8g3Vu68LGsXfqfec9k5"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol": {
+			"keccak256": "0x257a8d28fa83d3d942547c8e129ef465e4b5f3f31171e7be4739a4c98da6b4f0",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6d39e11b1dc7b9b8ccdabbc9be442ab7cda4a81c748f57e316dcb1bcb4a28bf9",
+				"dweb:/ipfs/QmaG6vz6W6iEUBsbHSBob5mdcitYxWjoygxREHpsJHfWrS"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol": {
+			"keccak256": "0xd3643595b0a46f577fff806736cbe4e3f81707c93fb1693a8a7960466e5cd321",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f7cccfc386f9cdb9037db66dd85a31347af8b733f39a18cbc12dbf1f5812d02d",
+				"dweb:/ipfs/QmcE3Hef9XLSbthiS3DKQFF1ZpYDZsPLHwW1DY5iUGAfcd"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/vendor/@ensdomains/buffer/v0.1.0/Buffer.sol": {
+			"keccak256": "0x0d86b367813922094e02594a406ba89f5e97d3d74ec2ce3c4032566840e302b0",
+			"license": "BSD-2-Clause",
+			"urls": [
+				"bzz-raw://2c65ceaef4ce70e8638275da75f4c384d4e404d588fcac404028da7e634c81a8",
+				"dweb:/ipfs/QmV3vMmjseNombFaRGw7K4PgDj6rrWcEzNY9S5jtLAdJqG"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/vendor/solidity-cborutils/v2.0.0/CBOR.sol": {
+			"keccak256": "0xdecf04203502670ac72ba466c75e4f87f4419907365005f0d73e7d07ee3e5715",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://39c9937cf45f840cf3a45a83dec3719dbd2f1d71198088db48b909ec656f77dd",
+				"dweb:/ipfs/QmQx9mEREaFyJGC2KpqWBqBV712NY8vUBrcqTR4RdVNBiu"
+			]
+		},
+		"@openzeppelin/contracts/interfaces/IERC1363.sol": {
+			"keccak256": "0x9b6b3e7803bc5f2f8cd7ad57db8ac1def61a9930a5a3107df4882e028a9605d7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://da62d6be1f5c6edf577f0cb45666a8aa9c2086a4bac87d95d65f02e2f4c36a4b",
+				"dweb:/ipfs/QmNkpvBpoCMvX8JwAFNSc5XxJ2q5BXJpL5L1txb4QkqVFF"
+			]
+		},
+		"@openzeppelin/contracts/interfaces/IERC165.sol": {
+			"keccak256": "0xde7e9fd9aee8d4f40772f96bb3b58836cbc6dfc0227014a061947f8821ea9724",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://11fea9f8bc98949ac6709f0c1699db7430d2948137aa94d5a9e95a91f61a710a",
+				"dweb:/ipfs/QmQdfRXxQjwP6yn3DVo1GHPpriKNcFghSPi94Z1oKEFUNS"
+			]
+		},
+		"@openzeppelin/contracts/interfaces/IERC20.sol": {
+			"keccak256": "0xce41876e78d1badc0512229b4d14e4daf83bc1003d7f83978d18e0e56f965b9c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://a2608291cb038b388d80b79a06b6118a42f7894ff67b7da10ec0dbbf5b2973ba",
+				"dweb:/ipfs/QmWohqcBLbcxmA4eGPhZDXe5RYMMEEpFq22nfkaUMvTfw1"
+			]
+		},
+		"@openzeppelin/contracts/interfaces/draft-IERC6093.sol": {
+			"keccak256": "0x880da465c203cec76b10d72dbd87c80f387df4102274f23eea1f9c9b0918792b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://399594cd8bb0143bc9e55e0f1d071d0d8c850a394fb7a319d50edd55d9ed822b",
+				"dweb:/ipfs/QmbPZzgtT6LEm9CMqWfagQFwETbV1ztpECBB1DtQHrKiRz"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC1155/ERC1155.sol": {
+			"keccak256": "0x22933f0f4897ff70a991c3baebfbc2574fd052dc4bae7fcafec45b07c1f23dd3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://13674cffad18cec55f013056496d7d2e3a34bd7bdbe23d1ef0c7588088c73367",
+				"dweb:/ipfs/QmcBkrwxNvCApG48Gyby2L6qCNtuhaFncGpbJt3zuukTmu"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC1155/IERC1155.sol": {
+			"keccak256": "0x68d6fdbeb467192c3627a46aa7bf5cbb73267363b740abc511f521a5a41a446e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7ce608c19d5e917c60f9c8aa3e5f0eb05b326280ac0a235e8bb9a848a3a64a91",
+				"dweb:/ipfs/QmdLPsWQJj7JvRae8MM13GEo4PBXaEFmD4b4heqcyMJNPG"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol": {
+			"keccak256": "0x61a23d601c2ab69dd726ac55058604cbda98e1d728ba31a51c379a3f9eeea715",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d8cbb06152d82ebdd5ba1d33454e5759492040f309a82637c7e99c948a04fa20",
+				"dweb:/ipfs/QmQQuLr6WSfLu97pMEh6XLefk99TSj9k5Qu1zXGPepwGiK"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol": {
+			"keccak256": "0xf1ad6c52c43d20b37c6324a7b7543a408d5cb3e609fa8ea164d29209ac3ca0ab",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://997802f43f4b5c13814b9f858ff1d97135973119a020f12364502ae712a2aaba",
+				"dweb:/ipfs/QmdhpM7YW5sZkiPxxahPbCP3AbUeqvPp4N8xNPFPBW5BnG"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol": {
+			"keccak256": "0x35d120c427299af1525aaf07955314d9e36a62f14408eb93dec71a2e001f74d3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://743e38acf441eece428c008be399c40a3ca5b2d595d58faf656cbdbac1a45374",
+				"dweb:/ipfs/QmcWDuWkndox3dxa5P7ZgpKy3iuQKkxBq1cR9hPV1ZzAfa"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC1155/utils/ERC1155Utils.sol": {
+			"keccak256": "0x30afe9013aaeb3ba735284a9310792776f57a3b2db6fc1d99628f2c47287f5cf",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1c675b740746031092efcedb2e18179f05fce8ba482de64e982715e4aa16bc90",
+				"dweb:/ipfs/QmVdUD89qYudLc88k5AsuQ6VWyz9SE1c6UXrVK32Yqh1YS"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://df6f0c459663c9858b6cba2cda1d14a7d05a985bed6d2de72bd8e78c25ee79db",
+				"dweb:/ipfs/QmeTTxZ7qVk9rjEv2R4CpCwdf8UMCcRqDNMvzNxHc3Fnn9"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
+			"keccak256": "0xca2ae13e0610f6a99238dd00b97bd786bc92732dae6d6b9d61f573ec51018310",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://75f8c71ce0c91c40dd5f249ace0b7d8270f8f1767231bcf71490f7157d6ba862",
+				"dweb:/ipfs/QmYXgxeDyFHvz3JsXxLEYN6GNUR44ThHeFj5XkpkgMoG4w"
+			]
+		},
+		"@openzeppelin/contracts/utils/Address.sol": {
+			"keccak256": "0x9d8da059267bac779a2dbbb9a26c2acf00ca83085e105d62d5d4ef96054a47f5",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c78e2aa4313323cecd1ef12a8d6265b96beee1a199923abf55d9a2a9e291ad23",
+				"dweb:/ipfs/QmUTs2KStXucZezzFo3EYeqYu47utu56qrF7jj1Gue65vb"
+			]
+		},
+		"@openzeppelin/contracts/utils/Arrays.sol": {
+			"keccak256": "0xaf9586854de33dc9d3a7160cad8170fdfb4119d02a44bad90ba16d71d701cc92",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c15a02762b0a51d66e36be135c27de656093fc09292fa743df8484b87d4486ea",
+				"dweb:/ipfs/QmbEozFrt5XwC9nzDFuXvN1RF3hQVwKYNi8c2R4bFvYJ2X"
+			]
+		},
+		"@openzeppelin/contracts/utils/Comparators.sol": {
+			"keccak256": "0x302eecd8cf323b4690e3494a7d960b3cbce077032ab8ef655b323cdd136cec58",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://49ba706f1bc476d68fe6c1fad75517acea4e9e275be0989b548e292eb3a3eacd",
+				"dweb:/ipfs/QmeBpvcdGWzWMKTQESUCEhHgnEQYYATVwPxLMxa6vMT7jC"
+			]
+		},
+		"@openzeppelin/contracts/utils/Context.sol": {
+			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12",
+				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
+			]
+		},
+		"@openzeppelin/contracts/utils/Errors.sol": {
+			"keccak256": "0x6afa713bfd42cf0f7656efa91201007ac465e42049d7de1d50753a373648c123",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ba1d02f4847670a1b83dec9f7d37f0b0418d6043447b69f3a29a5f9efc547fcf",
+				"dweb:/ipfs/QmQ7iH2keLNUKgq2xSWcRmuBE5eZ3F5whYAkAGzCNNoEWB"
+			]
+		},
+		"@openzeppelin/contracts/utils/Panic.sol": {
+			"keccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c6a5ff4f9fd8649b7ee20800b7fa387d3465bd77cf20c2d1068cd5c98e1ed57a",
+				"dweb:/ipfs/QmVSaVJf9FXFhdYEYeCEfjMVHrxDh5qL4CGkxdMWpQCrqG"
+			]
+		},
+		"@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
+			"keccak256": "0x11a5a79827df29e915a12740caf62fe21ebe27c08c9ae3e09abe9ee3ba3866d3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://3cf0c69ab827e3251db9ee6a50647d62c90ba580a4d7bbff21f2bea39e7b2f4a",
+				"dweb:/ipfs/QmZiKwtKU1SBX4RGfQtY7PZfiapbbu6SZ9vizGQD9UHjRA"
+			]
+		},
+		"@openzeppelin/contracts/utils/SlotDerivation.sol": {
+			"keccak256": "0x8447b57b63810fe2e367c09496a966f143ec0e825d71ddb9fce2506cff84b618",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://996cb48f793bf151555045b37138e36b3cdb31d6bc6552d3149285260be00cfb",
+				"dweb:/ipfs/QmcLaTTMNVbkMx58xhkp6GeFt4V3GtSyupZuaKG3vYW2Zc"
+			]
+		},
+		"@openzeppelin/contracts/utils/StorageSlot.sol": {
+			"keccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9f660b1f351b757dfe01438e59888f31f33ded3afcf5cb5b0d9bf9aa6f320a8b",
+				"dweb:/ipfs/QmarDJ5hZEgBtCmmrVzEZWjub9769eD686jmzb2XpSU1cM"
+			]
+		},
+		"@openzeppelin/contracts/utils/introspection/ERC165.sol": {
+			"keccak256": "0xddce8e17e3d3f9ed818b4f4c4478a8262aab8b11ed322f1bf5ed705bb4bd97fa",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8084aa71a4cc7d2980972412a88fe4f114869faea3fefa5436431644eb5c0287",
+				"dweb:/ipfs/Qmbqfs5dRdPvHVKY8kTaeyc65NdqXRQwRK7h9s5UJEhD1p"
+			]
+		},
+		"@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+			"keccak256": "0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df",
+				"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL"
+			]
+		},
+		"@openzeppelin/contracts/utils/math/Math.sol": {
+			"keccak256": "0xa00be322d7db5786750ce0ac7e2f5b633ac30a5ed5fa1ced1e74acfc19acecea",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6c84e822f87cbdc4082533b626667b6928715bb2b1e8e7eb96954cebb9e38c8d",
+				"dweb:/ipfs/QmZmy9dgxLTerBAQDuuHqbL6EpgRxddqgv5KmwpXYVbKz1"
+			]
+		},
+		"@openzeppelin/contracts/utils/math/SafeCast.sol": {
+			"keccak256": "0x195533c86d0ef72bcc06456a4f66a9b941f38eb403739b00f21fd7c1abd1ae54",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b1d578337048cad08c1c03041cca5978eff5428aa130c781b271ad9e5566e1f8",
+				"dweb:/ipfs/QmPFKL2r9CBsMwmUqqdcFPfHZB2qcs9g1HDrPxzWSxomvy"
+			]
+		},
+		"CrossChainBurnAndMintERC1155.sol": {
+			"keccak256": "0x23439f6f6a52f70fbe8ee949405157064cc158399684849f92dcdafa45ca639b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://a23c531aaa7e209000b1b5839e460245312c04ad8db28835ec44cc1bee770be1",
+				"dweb:/ipfs/QmXzCPoAcwcdQop9NstXHUbPRrzwfEPWfrnesLujrLSH2a"
+			]
+		},
+		"ERC1155Core.sol": {
+			"keccak256": "0x5a3f17effab1dad07041ae5fa2710637b8db967cde89d9650dd4b4d17718d2ad",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://97e7198a56aa9dbcfb124bf80c75b45fa627152ce0ba23e4c18c2d29f0f9c83e",
+				"dweb:/ipfs/QmafVvo4zAeh6LX2KCEe3Pg4mZHutoJBvRjVQHUSKvBLab"
+			]
+		},
+		"FunctionsSource.sol": {
+			"keccak256": "0x303282371e6ca5d4285c17e5897a5abfe22278d8a604efec20a390978420125a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6399e2b289b6ea09d1fc0bc97ed8097ee9b883010f4b1c72464116401a85be55",
+				"dweb:/ipfs/QmaoatG4cn2e7pXJJvoYmN5SiY31K227XoKNp3xWqigkXy"
+			]
+		},
+		"RealEstatePriceDetails.sol": {
+			"keccak256": "0xaf69ff1174cc971a05e8390afae8d51001048277817c74e0fac58e76a9a188fd",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c032c452d318c62f6626db9ffaa05b2c8b5ec90ff6d2136cdf4032dc7098129e",
+				"dweb:/ipfs/QmVrYgQ6mEdc48uNu2z4BWp1Z9Lp13g1TuQ6WpjsAB43m1"
+			]
+		},
+		"RealEstateToken.sol": {
+			"keccak256": "0xaf3c0ffbdffcaece896e7671631d5cd973a7ddc4d1ea223ae780ad1b84878e1a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6709f036374e4c1e75a02dbd6e381a6396964c494e749e2ead2054dab48c60eb",
+				"dweb:/ipfs/QmWXDHixsYawkbrb1Wpv6bj7g8qJJ1qt8RGFVnCpuYrLF4"
+			]
+		},
+		"use-cases/RWALending.sol": {
+			"keccak256": "0xfad66bb17bded59d453d82677a431d38e1f58ef6bef6142b0da7da80e9efbb2b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4845a83af6dd838bfb3311164e0d3294ece974a634b079d119df915517d1eeda",
+				"dweb:/ipfs/QmbSaoYaJTM7Rgjc8zQrcVCt197dSvu9h4aNXptg5uM2kG"
+			]
+		},
+		"utils/Withdraw.sol": {
+			"keccak256": "0x28a369f514cac1e8fcf3782a4953a3f31e22362cdb99ee6c085fdb05d788db95",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5bca1c2c0c3c32c746aa0c5f5c299f23c3b7a4b2e4d8962170236b1e341f12e9",
+				"dweb:/ipfs/QmYgZm3afn1zWf5JjpeknmiWU1ED2pekNaX6hEjAQXfJEK"
+			]
+		}
+	},
+	"version": 1
+}
